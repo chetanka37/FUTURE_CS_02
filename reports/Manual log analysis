@@ -1,0 +1,81 @@
+# Task 2 – Manual Log Analysis & Incident Response (Linux Method)
+
+🎯 Objective:
+Analyze Apache access logs manually using Linux CLI tools to detect suspicious activity and generate a response report.
+
+---
+
+## 🛠️ Tools Used
+- Kali Linux Terminal
+- Sample Apache Access Log (Elastic GitHub)
+- CLI Utilities: grep, awk, cut, uniq, sort, wc
+- gnome-screenshot for evidence collection
+
+---
+
+## 🔽 Log File Downloaded
+wget https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/apache_logs/apache_logs -O ~/internship-reports/Task_2/apache_access.log
+
+File saved at:
+~/internship-reports/Task_2/apache_access.log
+
+---
+
+## 📊 Commands Executed & Their Purpose
+
+1️⃣ Total Number of Log Entries
+wc -l ~/internship-reports/Task_2/apache_access.log
+> Helps determine total HTTP requests received by server
+
+2️⃣ Top 5 Most Requesting IPs
+awk '{print $1}' ~/internship-reports/Task_2/apache_access.log | sort | uniq -c | sort -nr | head -5
+> Detects potentially abusive IPs making repeated requests
+
+3️⃣ Top 5 Requested URLs
+awk -F\" '{print $2}' ~/internship-reports/Task_2/apache_access.log | awk '{print $2}' | sort | uniq -c | sort -nr | head -5
+> Helps identify common or abused endpoints
+
+4️⃣ 404 Error Requests (Path Scanning Detection)
+grep " 404 " ~/internship-reports/Task_2/apache_access.log
+> Shows all failed attempts to access non-existent pages
+
+5️⃣ Suspicious HTTP Methods (e.g., DELETE/PUT)
+grep -E "PUT|DELETE|HEAD" ~/internship-reports/Task_2/apache_access.log
+> Detects use of methods not typical for regular browsers
+
+---
+
+## 📸 Screenshot Captured
+gnome-screenshot -a
+Saved as:
+~/internship-reports/Task_2/screenshots/task2_log_terminal.png
+
+---
+
+## 🧠 Key Findings
+- IP `83.149.9.216` made over 50 requests including many 404s
+- Repeated access to `/phpmyadmin`, `/xmlrpc.php`, and other non-existent pages
+- Use of unusual HTTP method `DELETE` by `219.88.144.12`
+- Suspicious scanning behavior from multiple IPs
+
+---
+
+## 🛡️ Suggested Incident Response
+- Block IPs generating 404 errors repeatedly
+- Alert when HTTP methods like DELETE/PUT are used
+- Enable Web Application Firewall (WAF) rules for sensitive paths
+- Enforce access controls and login rate limits
+
+---
+
+## 📂 Folder Structure
+~/internship-reports/Task_2/
+├── apache_access.log
+├── reports/
+│   └── task2_manual_log_analysis.txt
+└── screenshots/
+    └── task2_log_terminal.png
+
+---
+
+✅ Status: Task 2 completed successfully using offline Linux-based log analysis due to Splunk Cloud access denial. Report and screenshot saved.
